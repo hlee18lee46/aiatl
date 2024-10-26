@@ -6,6 +6,7 @@ import AVKit
 import GoogleGenerativeAI
 
 // MARK: - Speech Recognition Class
+// MARK: - Speech Recognition Class
 class SpeechRecognizer: ObservableObject {
     @Published var recognizedText = "Tap to start speaking"
     @Published var isListening = false
@@ -101,6 +102,43 @@ class SpeechRecognizer: ObservableObject {
     }
 }
 
+// Image Picker for selecting an image (Modify for camera input if needed)
+struct ImagePickerForGemini: UIViewControllerRepresentable {
+    @Binding var selectedImage: UIImage?
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.sourceType = .camera // Using camera to take photos directly
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    
+    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+        var parent: ImagePickerForGemini
+        
+        init(_ parent: ImagePickerForGemini) {
+            self.parent = parent
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.selectedImage = image
+            }
+            picker.dismiss(animated: true)
+        }
+        
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
+        }
+    }
+}
+
 // MARK: - Image Picker for Video Capture
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
@@ -138,38 +176,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-// MARK: - Image Picker for Gemini Nutrition Analysis
-struct ImagePickerForGemini: UIViewControllerRepresentable {
-    @Binding var selectedImage: UIImage?
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    func makeUIViewController(context: Context) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.delegate = context.coordinator
-        picker.sourceType = .photoLibrary
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-    
-    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        var parent: ImagePickerForGemini
-        
-        init(_ parent: ImagePickerForGemini) {
-            self.parent = parent
-        }
-        
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                parent.selectedImage = image
-            }
-            picker.dismiss(animated: true)
-        }
-    }
-}
+
 enum APIKey {
     // Fetch the API key from Info.plist
     static var `default`: String {
@@ -185,64 +192,149 @@ enum APIKey {
 }
 // MARK: - Main Content View
 struct ContentView: View {
+    @ObservedObject var speechRecognizer = SpeechRecognizer()
+
     @State private var selectedImage: UIImage? = nil
     @State private var nutritionFacts: String = "Nutrition facts will appear here."
     @State private var showImagePicker = false
-
+    @State private var showCamera = false
+    @State private var showImagePickerForVideo = false
+    @State private var showImagePickerForGemini = false
+    @State private var videoURL: URL? = nil
+    @State private var isHumanDetectionActive = false
+    @State private var capturedImage: UIImage? = nil
+    
+    // Define the speech synthesizer
+    private let speechSynthesizer = AVSpeechSynthesizer()
+    
+    
     var body: some View {
         VStack {
-            if let image = selectedImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 300, height: 300)
-            }
-            
-            Text(nutritionFacts)
+            Text(speechRecognizer.recognizedText)
+                .font(.title)
                 .padding()
             
             Button("Select Image for Nutrition Facts") {
-                showImagePicker = true
+                showImagePickerForGemini = true
             }
+            .padding()
             
             Button("Get Nutrition Facts") {
                 if let image = selectedImage {
                     getNutritionFactsFromGemini(image: image)
                 } else {
                     nutritionFacts = "Please select an image first."
+                    speak(text: nutritionFacts) // Speak error if no image selected
                 }
             }
+            .padding()
+            
+            Button("Speak Nutrition Facts") {
+                speakNutritionFacts()
+            }
+            .padding()
+            
+            if let image = selectedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+            }
+            
+            Text(nutritionFacts)
+                .padding()
+                .onChange(of: nutritionFacts) { newValue in
+                    speak(text: newValue) // Automatically speak new nutrition facts
+                }
         }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(selectedImage: $selectedImage)
+        .sheet(isPresented: $showImagePickerForGemini) {
+            ImagePickerForGemini(selectedImage: $selectedImage)
         }
     }
-
+    
     func getNutritionFactsFromGemini(image: UIImage) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             print("Failed to convert image to JPEG data")
             return
         }
+        
         let generativeModel = GenerativeModel(
             name: "gemini-1.5-flash",
             apiKey: APIKey.default
         )
-
-        let prompt = "what's in the photo?, If it shows food/drinks then show nutrition facts"
-
+        
+        let prompt = "Can you tell me the nutrition facts for the item in this photo?"
+        
         Task {
             do {
                 let response = try await generativeModel.generateContent(image, prompt)
                 if let text = response.text {
                     DispatchQueue.main.async {
                         self.nutritionFacts = text
+                        self.speakNutritionFacts() // Speak immediately after setting the text
+                        print("Received nutrition facts: \(text)")
                     }
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.nutritionFacts = "Failed to retrieve nutrition facts: \(error.localizedDescription)"
+                    print("Error fetching nutrition facts: \(error.localizedDescription)")
                 }
             }
+        }
+    }
+
+    
+    // MARK: - Text-to-Speech Function
+    private func speak(text: String) {
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(utterance)
+    }
+    func speakNutritionFacts() {
+        let utterance = AVSpeechUtterance(string: nutritionFacts)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        speechSynthesizer.speak(utterance)
+    }
+}
+
+
+
+// MARK: - Camera View for Taking Photo
+struct CameraView: UIViewControllerRepresentable {
+    @Binding var capturedImage: UIImage?
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        picker.cameraCaptureMode = .photo
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+        var parent: CameraView
+
+        init(_ parent: CameraView) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.capturedImage = image
+            }
+            picker.dismiss(animated: true)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
         }
     }
 }

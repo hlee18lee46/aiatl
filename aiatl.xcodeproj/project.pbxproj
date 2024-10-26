@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FE078BA72CCD486D000985CF /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = FE078BA62CCD486D000985CF /* GoogleGenerativeAI */; };
+		FEF8C3602CCD902F002F411A /* LangGraph in Frameworks */ = {isa = PBXBuildFile; productRef = FEF8C35F2CCD902F002F411A /* LangGraph */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE078BA72CCD486D000985CF /* GoogleGenerativeAI in Frameworks */,
+				FEF8C3602CCD902F002F411A /* LangGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,7 @@
 			name = aiatl;
 			packageProductDependencies = (
 				FE078BA62CCD486D000985CF /* GoogleGenerativeAI */,
+				FEF8C35F2CCD902F002F411A /* LangGraph */,
 			);
 			productName = aiatl;
 			productReference = FE078B742CCD46EA000985CF /* aiatl.app */;
@@ -216,6 +219,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FE078BA52CCD486D000985CF /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+				FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FE078B752CCD46EA000985CF /* Products */;
@@ -418,6 +422,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"aiatl/Preview Content\"";
+				DEVELOPMENT_TEAM = RV4VF9YHC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = aiatl/Info.plist;
@@ -448,6 +453,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"aiatl/Preview Content\"";
+				DEVELOPMENT_TEAM = RV4VF9YHC6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = aiatl/Info.plist;
@@ -588,6 +594,14 @@
 				minimumVersion = 0.5.6;
 			};
 		};
+		FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bsorrentino/LangGraph-Swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -595,6 +609,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FE078BA52CCD486D000985CF /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
 			productName = GoogleGenerativeAI;
+		};
+		FEF8C35F2CCD902F002F411A /* LangGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */;
+			productName = LangGraph;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
