@@ -18,7 +18,15 @@ struct ContentView: View {
     @State private var videoURL: URL? = nil
     @State private var isHumanDetectionActive = false
     @State private var capturedImage: UIImage? = nil
+
+    @State private var userPrompt: String = ""
+    @State private var generatedText: String = "Generated content will appear here."
     
+    private let generativeModel: GenerativeModel
+    
+    init() {
+        self.generativeModel = GenerativeModel(name: "gemini-1.5-flash", apiKey: APIKey.default)
+    }
     // Define the speech synthesizer
     private let speechSynthesizer = AVSpeechSynthesizer()
     let toolAgent = ToolAgent(tools: [NutritionFactsTool()]) // Ensure NutritionFactsTool conforms to ToolProtocol
@@ -26,6 +34,25 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            Text("Enter your prompt below:")
+                .font(.headline)
+            TextField("Type your prompt here...", text: $userPrompt)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            Text(generatedText)
+                .padding()
+                .multilineTextAlignment(.center)
+            
+            Button("Generate Content with Gemini") {
+                Task {
+                    await generateContent()
+                }
+            }
+            .padding()
+            Text(generatedText)
+                .padding()
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
             Text(speechRecognizer.recognizedText)
                 .font(.title)
                 .padding()
@@ -67,7 +94,26 @@ struct ContentView: View {
             ImagePickerForGemini(selectedImage: $selectedImage)
         }
     }
-    
+    // Function to call the Gemini API and update generatedText
+    func generateContent() async {
+        guard !userPrompt.isEmpty else {
+            self.generatedText = "Please enter a prompt to generate content."
+            return
+        }
+        
+        do {
+            let response = try await generativeModel.generateContent(userPrompt)
+            if let text = response.text {
+                DispatchQueue.main.async {
+                    self.generatedText = text
+                }
+            } else {
+                self.generatedText = "No content generated."
+            }
+        } catch {
+            self.generatedText = "Error: \(error.localizedDescription)"
+        }
+    }
     func getNutritionFactsFromGemini(image: UIImage) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             print("Failed to convert image to JPEG data")
