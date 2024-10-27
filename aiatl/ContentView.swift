@@ -16,7 +16,7 @@ struct ContentView: View {
     @State private var userPrompt: String = ""
     @State private var toolResponse: String = ""
     
-    let toolAgent = ToolAgent(tools: [AttachPhotoTool(), NutritionFactsTool(), GeminiLLMTool()])
+    let toolAgent = ToolAgent(tools: [AttachPhotoTool(), NutritionFactsTool(), GeminiLLMTool(), SugarContentTool(), BusNumberTool()])
 
     var body: some View {
         VStack {
