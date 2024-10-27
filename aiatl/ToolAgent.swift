@@ -17,6 +17,6 @@ struct ToolAgent {
                 return try await tool.execute(input: input, context: context)
             }
         }
-        return "No suitable tool found for the input."
+        return "Generating..."
     }
 }
