@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		FE078BA72CCD486D000985CF /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = FE078BA62CCD486D000985CF /* GoogleGenerativeAI */; };
+		FEAABC0F2CCDB64A000F5C8C /* LangGraph in Frameworks */ = {isa = PBXBuildFile; productRef = FEAABC0E2CCDB64A000F5C8C /* LangGraph */; };
+		FEAABC122CCDB7A7000F5C8C /* LangChain in Frameworks */ = {isa = PBXBuildFile; productRef = FEAABC112CCDB7A7000F5C8C /* LangChain */; };
+		FEAABC152CCDB9E5000F5C8C /* SwiftAnthropic in Frameworks */ = {isa = PBXBuildFile; productRef = FEAABC142CCDB9E5000F5C8C /* SwiftAnthropic */; };
 		FEF8C3602CCD902F002F411A /* LangGraph in Frameworks */ = {isa = PBXBuildFile; productRef = FEF8C35F2CCD902F002F411A /* LangGraph */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +41,7 @@
 		FE078BA42CCD473B000985CF /* Exceptions for "aiatl" folder in "aiatl" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				ImagePicker.swift,
 				Info.plist,
 			);
 			target = FE078B732CCD46EA000985CF /* aiatl */;
@@ -70,8 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEAABC122CCDB7A7000F5C8C /* LangChain in Frameworks */,
 				FE078BA72CCD486D000985CF /* GoogleGenerativeAI in Frameworks */,
 				FEF8C3602CCD902F002F411A /* LangGraph in Frameworks */,
+				FEAABC152CCDB9E5000F5C8C /* SwiftAnthropic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEAABC0F2CCDB64A000F5C8C /* LangGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +141,8 @@
 			packageProductDependencies = (
 				FE078BA62CCD486D000985CF /* GoogleGenerativeAI */,
 				FEF8C35F2CCD902F002F411A /* LangGraph */,
+				FEAABC112CCDB7A7000F5C8C /* LangChain */,
+				FEAABC142CCDB9E5000F5C8C /* SwiftAnthropic */,
 			);
 			productName = aiatl;
 			productReference = FE078B742CCD46EA000985CF /* aiatl.app */;
@@ -157,6 +166,7 @@
 			);
 			name = aiatlTests;
 			packageProductDependencies = (
+				FEAABC0E2CCDB64A000F5C8C /* LangGraph */,
 			);
 			productName = aiatlTests;
 			productReference = FE078B842CCD46EB000985CF /* aiatlTests.xctest */;
@@ -220,6 +230,8 @@
 			packageReferences = (
 				FE078BA52CCD486D000985CF /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 				FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */,
+				FEAABC102CCDB7A7000F5C8C /* XCRemoteSwiftPackageReference "langchain-swift" */,
+				FEAABC132CCDB9E5000F5C8C /* XCRemoteSwiftPackageReference "SwiftAnthropic" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FE078B752CCD46EA000985CF /* Products */;
@@ -431,7 +443,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -462,7 +474,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -594,6 +606,22 @@
 				minimumVersion = 0.5.6;
 			};
 		};
+		FEAABC102CCDB7A7000F5C8C /* XCRemoteSwiftPackageReference "langchain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/buhe/langchain-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.50.0;
+			};
+		};
+		FEAABC132CCDB9E5000F5C8C /* XCRemoteSwiftPackageReference "SwiftAnthropic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jamesrochabrun/SwiftAnthropic";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
 		FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/bsorrentino/LangGraph-Swift";
@@ -609,6 +637,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FE078BA52CCD486D000985CF /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
 			productName = GoogleGenerativeAI;
+		};
+		FEAABC0E2CCDB64A000F5C8C /* LangGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEF8C35E2CCD902F002F411A /* XCRemoteSwiftPackageReference "LangGraph-Swift" */;
+			productName = LangGraph;
+		};
+		FEAABC112CCDB7A7000F5C8C /* LangChain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEAABC102CCDB7A7000F5C8C /* XCRemoteSwiftPackageReference "langchain-swift" */;
+			productName = LangChain;
+		};
+		FEAABC142CCDB9E5000F5C8C /* SwiftAnthropic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEAABC132CCDB9E5000F5C8C /* XCRemoteSwiftPackageReference "SwiftAnthropic" */;
+			productName = SwiftAnthropic;
 		};
 		FEF8C35F2CCD902F002F411A /* LangGraph */ = {
 			isa = XCSwiftPackageProductDependency;
