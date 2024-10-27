@@ -43,6 +43,7 @@
 			membershipExceptions = (
 				ImagePicker.swift,
 				Info.plist,
+				"Untitled 3.swift",
 			);
 			target = FE078B732CCD46EA000985CF /* aiatl */;
 		};
